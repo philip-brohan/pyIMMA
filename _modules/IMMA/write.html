@@ -1,0 +1,178 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>IMMA.write &#8212; A Python API for IMMA records</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyIMMA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/records.png" alt="Logo"/>
+            </a></p>
+<h3><a href="../../index.html">Table Of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_IMMA.html">The python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../instructions.html">How to use this dataset</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Authors and acknowledgements</a></li>
+</ul>
+<h3><a href="https://github.com/philip-brohan/pyIMMA">Get the package</a></h3>
+
+<ul>
+<li><a href="https://github.com/philip-brohan/pyIMMA"
+           rel="nofollow">Github repository</a></li>
+<li><a href="https://github.com/philip-brohan/pyIMMA/archive/master.zip"
+           rel="nofollow">Zip file</a></li>
+</ul>
+
+<h3>Found a bug, or have a suggestion?</h3>
+
+Please <a href="https://github.com/philip-brohan/pyIMMA/issues/new">raise an issue</a>.
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for IMMA.write</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Read in IMMA records from files.</span>
+
+<span class="kn">import</span> <span class="nn">re</span>     <span class="c1">#  Regular Expressions</span>
+<span class="kn">from</span> <span class="nn">structure</span> <span class="k">import</span> <span class="n">attachment</span>
+<span class="kn">from</span> <span class="nn">structure</span> <span class="k">import</span> <span class="n">parameters</span>
+<span class="kn">from</span> <span class="nn">structure</span> <span class="k">import</span> <span class="n">definitions</span>
+
+<span class="c1"># Write out a record to a file</span>
+<div class="viewcode-block" id="write"><a class="viewcode-back" href="../../module_IMMA.html#IMMA.write">[docs]</a><span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">record</span><span class="p">,</span><span class="n">fh</span><span class="p">):</span>           <span class="c1"># fh is a filehandle</span>
+    <span class="sd">&quot;&quot;&quot;Write the given record to a file.</span>
+
+<span class="sd">    File should be result of  :func:`open` (or anything with a ``write`` method).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        record (:obj:`dict`): One IMMA record.</span>
+<span class="sd">        fh (:obj:`file`): File to write to (from :func:`open` function).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">Result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">Attachment</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">attachments</span><span class="p">:</span>
+        <span class="n">Result</span> <span class="o">+=</span> <span class="n">record</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+            <span class="n">Attachment</span><span class="p">,</span><span class="n">attachment_n</span><span class="p">)</span>
+    <span class="n">Result</span><span class="o">=</span><span class="n">Result</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+    <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span> <span class="n">Result</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="p">)</span></div>
+    <span class="k">return</span> <span class="mi">1</span>
+
+<span class="c1"># Make a string representation of an attachment</span>
+<span class="k">def</span> <span class="nf">_encode</span> <span class="p">(</span><span class="n">attachment</span><span class="p">,</span>
+             <span class="n">attachment_n</span><span class="p">):</span>    <span class="c1"># Attachment number</span>
+    <span class="n">params</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">attachment_n</span><span class="p">]</span>
+    <span class="n">defns</span><span class="o">=</span><span class="n">definitions</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">attachment_n</span><span class="p">]</span>
+    <span class="n">Result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="n">attachment</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">Tmp</span> <span class="o">=</span> <span class="n">attachment</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+
+            <span class="c1"># Scale to integer units for output</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">5</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span> <span class="p">):</span>
+                <span class="n">Tmp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">Tmp</span><span class="p">)</span><span class="o">/</span><span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">5</span><span class="p">];</span>
+                <span class="n">Tmp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Tmp</span><span class="o">+</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># nint</span>
+
+            <span class="c1"># Encode as base36 if required</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span> <span class="p">):</span>
+                <span class="n">Tmp</span> <span class="o">=</span> <span class="n">encode_base36</span><span class="p">(</span><span class="n">Tmp</span><span class="p">);</span>
+
+            <span class="c1"># Print as an string of the correct length</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">):</span>  <span class="c1"># Integer</span>
+
+                <span class="k">if</span> <span class="p">(</span> <span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span> <span class="p">):</span>
+                    <span class="n">Lstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%%%d</span><span class="s2">d&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">Tmp</span> <span class="o">=</span> <span class="n">Lstring</span> <span class="o">%</span> <span class="p">(</span><span class="n">Tmp</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Undefined length - don&#39;t try to constrain it</span>
+                    <span class="n">Tmp</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">Tmp</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>                                      <span class="c1"># String</span>
+
+                <span class="k">if</span> <span class="p">(</span> <span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span> <span class="p">):</span>
+                    <span class="n">Lstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%%</span><span class="s2">-</span><span class="si">%d</span><span class="s2">s&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">Tmp</span> <span class="o">=</span> <span class="n">Lstring</span> <span class="o">%</span> <span class="p">(</span><span class="n">Tmp</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Tmp</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%-s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">Tmp</span><span class="p">)</span>
+
+            <span class="n">Result</span> <span class="o">+=</span> <span class="n">Tmp</span>
+
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Undefined data - make a blank string of the corect length</span>
+
+            <span class="k">if</span> <span class="p">(</span> <span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span> <span class="p">):</span>
+                <span class="n">Lstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%%%d</span><span class="s2">s&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">Result</span> <span class="o">+=</span> <span class="n">Lstring</span> <span class="o">%</span> <span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span> <span class="c1"># Undefined data with unknown length - should never happen</span>
+                <span class="n">Result</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span><span class="p">;</span>
+
+<span class="c1"># Done all the parameters, add the ID and length to the start</span>
+<span class="c1"># (except for core)</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="n">attachment_n</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="n">attachment_n</span> <span class="o">!=</span> <span class="mi">99</span> <span class="p">):</span>
+            <span class="n">Result</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%2d%2d%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">attachment_n</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Result</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="n">Result</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Result</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%2d</span><span class="s2"> 0</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">attachment_n</span><span class="p">,</span> <span class="n">Result</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Result</span>
+
+
+<span class="c1"># Convert a base 10 value in the range 0-35 to base36</span>
+<span class="k">def</span> <span class="nf">_encode_base36</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ&#39;</span><span class="p">[</span><span class="n">t</span><span class="p">:</span><span class="n">t</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyIMMA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    </div>
+  </body>
+</html>

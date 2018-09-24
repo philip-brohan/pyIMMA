@@ -1,0 +1,202 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>IMMA.read &#8212; A Python API for IMMA records</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyIMMA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/records.png" alt="Logo"/>
+            </a></p>
+<h3><a href="../../index.html">Table Of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_IMMA.html">The python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../instructions.html">How to use this dataset</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Authors and acknowledgements</a></li>
+</ul>
+<h3><a href="https://github.com/philip-brohan/pyIMMA">Get the package</a></h3>
+
+<ul>
+<li><a href="https://github.com/philip-brohan/pyIMMA"
+           rel="nofollow">Github repository</a></li>
+<li><a href="https://github.com/philip-brohan/pyIMMA/archive/master.zip"
+           rel="nofollow">Zip file</a></li>
+</ul>
+
+<h3>Found a bug, or have a suggestion?</h3>
+
+Please <a href="https://github.com/philip-brohan/pyIMMA/issues/new">raise an issue</a>.
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for IMMA.read</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Read in IMMA records from files.</span>
+
+<span class="kn">import</span> <span class="nn">re</span>     <span class="c1">#  Regular Expressions</span>
+<span class="kn">from</span> <span class="nn">structure</span> <span class="k">import</span> <span class="n">attachment</span>
+<span class="kn">from</span> <span class="nn">structure</span> <span class="k">import</span> <span class="n">parameters</span>
+<span class="kn">from</span> <span class="nn">structure</span> <span class="k">import</span> <span class="n">definitions</span>
+
+<span class="c1"># Convert a single-digit base36 value to base 10</span>
+<span class="k">def</span> <span class="nf">_decode_base36</span><span class="p">(</span><span class="n">t</span><span class="p">):</span> 
+    <span class="k">return</span> <span class="s1">&#39;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ&#39;</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+<span class="c1"># Extract the parameter values from the string representation</span>
+<span class="c1">#  of an attachment</span>
+<span class="k">def</span> <span class="nf">_decode</span><span class="p">(</span><span class="n">as_string</span><span class="p">,</span>        <span class="c1"># String representation of the attachment</span>
+            <span class="n">attachment_n</span><span class="p">):</span>    <span class="c1"># Attachment number</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">as_string</span><span class="o">==</span> <span class="kc">None</span> <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bad IMMA string: No data to decode&quot;</span><span class="p">)</span>
+    <span class="n">params</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">attachment_n</span><span class="p">]</span>
+    <span class="n">defns</span><span class="o">=</span><span class="n">definitions</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">attachment_n</span><span class="p">]</span>
+
+    <span class="n">Decoded</span><span class="o">=</span><span class="p">{}</span>
+    <span class="n">Position</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span> <span class="p">):</span>
+            <span class="n">Decoded</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">as_string</span><span class="p">[</span><span class="n">Position</span><span class="p">:</span><span class="n">Position</span><span class="o">+</span><span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">Position</span> <span class="o">+=</span> <span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>                  <span class="c1"># Undefined length - so slurp all the data</span>
+            <span class="n">Decoded</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">as_string</span><span class="p">[</span><span class="n">Position</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">as_string</span><span class="p">)]</span>
+            <span class="n">Decoded</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Decoded</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">Position</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">as_string</span><span class="p">)</span>
+
+    <span class="c1"># Blanks mean value is undefined</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;\S&quot;</span><span class="p">,</span><span class="n">Decoded</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span> <span class="o">==</span> <span class="kc">None</span> <span class="p">):</span>
+            <span class="n">Decoded</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">continue</span>    <span class="c1">#  Next parameter</span>
+
+        <span class="k">if</span> <span class="p">(</span> <span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span> <span class="p">):</span>
+            <span class="n">Decoded</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_decode_base36</span><span class="p">(</span><span class="n">Decoded</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+
+        <span class="k">if</span> <span class="p">(</span> <span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">):</span>
+            <span class="n">Decoded</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Decoded</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+
+        <span class="k">if</span> <span class="p">(</span> <span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">5</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span>
+             <span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">5</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">1.0</span> <span class="p">):</span>
+            <span class="n">Decoded</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Decoded</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span><span class="o">*</span><span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">5</span><span class="p">];</span>
+    <span class="k">return</span> <span class="n">Decoded</span>
+
+<span class="c1"># Make an iterator returning IMMA records from a file</span>
+<div class="viewcode-block" id="get"><a class="viewcode-back" href="../../module_IMMA.html#IMMA.get">[docs]</a><span class="k">class</span> <span class="nc">get</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Turn an imma file into an iterator providing its records.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (:obj:`str`): Name of file containing IMMA records.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`func`: iterator - call ``next()`` on this to get the next record.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fh</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c1"># Python 3: def __next__(self)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fh</span><span class="o">.</span><span class="n">readline</span><span class="p">();</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">):</span> <span class="k">raise</span> <span class="ne">StopIteration</span>
+        <span class="n">line</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>       <span class="c1"># Remove trailing newline</span>
+        <span class="n">Attachment_n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>            <span class="c1"># Core always first</span>
+        <span class="n">Length</span>     <span class="o">=</span> <span class="mi">108</span><span class="p">;</span>
+        <span class="n">record</span><span class="o">=</span><span class="p">{}</span>
+        <span class="n">record</span><span class="p">[</span><span class="s1">&#39;attachments&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">while</span> <span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="n">Length</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">Length</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">Length</span> <span class="p">):</span>
+                <span class="n">sfmt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%%%d</span><span class="s2">s&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">Length</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+                <span class="n">line</span> <span class="o">+=</span> <span class="n">sfmt</span> <span class="o">%</span> <span class="s2">&quot; &quot;</span>
+
+            <span class="n">record</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_decode</span><span class="p">(</span><span class="n">line</span><span class="p">,</span><span class="n">Attachment_n</span><span class="p">))</span>
+            <span class="n">record</span><span class="p">[</span><span class="s1">&#39;attachments&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">Attachment_n</span><span class="p">))</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="n">Length</span><span class="o">==</span><span class="kc">None</span> <span class="ow">or</span> <span class="n">Length</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">):</span>
+                <span class="k">break</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">Length</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">):</span>
+                <span class="n">Attachment_n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+                <span class="n">Length</span>       <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+                <span class="k">if</span><span class="p">(</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;\S&quot;</span><span class="p">,</span><span class="n">Length</span><span class="p">)</span><span class="o">==</span><span class="kc">None</span><span class="p">):</span> 
+                    <span class="n">Length</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="p">(</span> <span class="n">Length</span> <span class="o">!=</span> <span class="kc">None</span> <span class="p">):</span>
+                    <span class="n">Length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Length</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="p">(</span> <span class="n">Length</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">):</span>
+                        <span class="n">Length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Length</span><span class="p">)</span><span class="o">-</span><span class="mi">4</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)]</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">attachment</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">Attachment_n</span><span class="p">]</span><span class="o">==</span><span class="kc">None</span> <span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bad IMMA string&quot;</span><span class="p">,</span><span class="s2">&quot;Unsupported attachment ID </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">Attachment_n</span><span class="p">)</span>
+</div>
+        <span class="k">return</span> <span class="n">record</span>
+
+<span class="c1"># Function to read in all the records in a file</span>
+<div class="viewcode-block" id="read"><a class="viewcode-back" href="../../module_IMMA.html#IMMA.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load all the records from an imma file.</span>
+
+<span class="sd">    Just the same as ``list(IMMA.get(filename)``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (:obj:`str`): Name of file containing IMMA records.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:`list`: List of records - each record is a :obj:`dict`:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+</div>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">get</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyIMMA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    </div>
+  </body>
+</html>

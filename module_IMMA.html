@@ -1,0 +1,187 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>IMMA: A module for observations in International Meteorological Maritime Archive format &#8212; A Python API for IMMA records</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How to use this dataset" href="instructions.html" />
+    <link rel="prev" title="A python API for IMMA data" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="instructions.html" title="How to use this dataset"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="A python API for IMMA data"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyIMMA</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/records.png" alt="Logo"/>
+            </a></p>
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="instructions.html">How to use this dataset</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Authors and acknowledgements</a></li>
+</ul>
+<h3><a href="https://github.com/philip-brohan/pyIMMA">Get the package</a></h3>
+
+<ul>
+<li><a href="https://github.com/philip-brohan/pyIMMA"
+           rel="nofollow">Github repository</a></li>
+<li><a href="https://github.com/philip-brohan/pyIMMA/archive/master.zip"
+           rel="nofollow">Zip file</a></li>
+</ul>
+
+<h3>Found a bug, or have a suggestion?</h3>
+
+Please <a href="https://github.com/philip-brohan/pyIMMA/issues/new">raise an issue</a>.
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-IMMA">
+<span id="imma-a-module-for-observations-in-international-meteorological-maritime-archive-format"></span><h1>IMMA: A module for observations in International Meteorological Maritime Archive format<a class="headerlink" href="#module-IMMA" title="Permalink to this headline">¶</a></h1>
+<p>This module provides a python API to <a class="reference external" href="http://icoads.noaa.gov/e-doc/imma">IMMA files</a>.</p>
+<p>IMMA files are not necessarily consistent in their contents - each line can have a different set of extensions. So we can’t treat the file as a table of data - instead we treat it as a list of records, and read those records one at a time.</p>
+<p>So an IMMA file is best thought of as an <a class="reference external" href="https://anandology.com/python-practice-book/iterators.html">iterator</a>. Set up a file as an iterator with the  <a class="reference internal" href="#IMMA.get" title="IMMA.get"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get()</span></code></a> function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">IMMA</span>
+<span class="n">iobs</span><span class="o">=</span><span class="n">IMMA</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;some_file.imma&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then every time you call <code class="docutils literal notranslate"><span class="pre">iobs.next()</span></code> you will get the next record from <code class="docutils literal notranslate"><span class="pre">some_file.imma</span></code>.</p>
+<p>Each record is returned as a <a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> where vthe keys are the IMMA variable names. So after <code class="docutils literal notranslate"><span class="pre">rec=iobs.next()</span></code>, the sea-surface temperature is in <code class="docutils literal notranslate"><span class="pre">rec['SST']</span></code>.</p>
+<p>If you want all the records in the file loaded simultaniously, either use <code class="docutils literal notranslate"><span class="pre">obs=list(iobs)</span></code> or call the <a class="reference internal" href="#IMMA.read" title="IMMA.read"><code class="xref py py-func docutils literal notranslate"><span class="pre">read()</span></code></a> function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">obs</span><span class="o">=</span><span class="n">IMMA</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;some_file.imma&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In both cases <code class="docutils literal notranslate"><span class="pre">obs</span></code> will be a list of dictionaries. So <code class="docutils literal notranslate"><span class="pre">obs[3]['SST']</span></code> will be the SST from the fourth record in the file. If you want a list of all the SSTs in the file, you need something like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">SSTs</span><span class="o">=</span><span class="p">[</span><span class="n">ob</span><span class="p">[</span><span class="s1">&#39;SST&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="n">obs</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">SST</span></code> is in the <code class="docutils literal notranslate"><span class="pre">core</span></code> extension, so <code class="docutils literal notranslate"><span class="pre">rec['SST']</span></code> will either have a valid number, or be <code class="docutils literal notranslate"><span class="pre">None</span></code> (blank in the IMMA record). If you look for a variable in an extension other than <code class="docutils literal notranslate"><span class="pre">core</span></code> it may be that the extension is not present in the selected record. In this case looking for it will raise a <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>. I.e. <code class="docutils literal notranslate"><span class="pre">rec['DCK']</span></code> might be a valid deck ID, it might be <code class="docutils literal notranslate"><span class="pre">None</span></code> (if the <code class="docutils literal notranslate"><span class="pre">ICOADS</span></code> extension is present but the DCK entry is blank) or it might raise a <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> (if the ICOADS extension is missing from that record).</p>
+<p>To output records to a file, first <code class="docutils literal notranslate"><span class="pre">open</span></code> the file, and then <a class="reference internal" href="#IMMA.write" title="IMMA.write"><code class="xref py py-func docutils literal notranslate"><span class="pre">write()</span></code></a> records to it one at a time:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">opfile</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;some_output_file.imma&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="n">obs</span><span class="p">:</span>
+    <span class="n">IMMA</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ob</span><span class="p">,</span><span class="n">opfile</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The list of extensions to write to the file is controlled by <code class="docutils literal notranslate"><span class="pre">ob['extensions']</span></code> - an integer array containing the <code class="docutils literal notranslate"><span class="pre">extension_id</span></code> for all the extensions in the record. You need to update this explicitly - if you add or delete extensions from a record, update this array.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<dl class="class">
+<dt id="IMMA.get">
+<em class="property">class </em><code class="descclassname">IMMA.</code><code class="descname">get</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/IMMA/read.html#get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#IMMA.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn an imma file into an iterator providing its records.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of file containing IMMA records.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">iterator - call <code class="docutils literal notranslate"><span class="pre">next()</span></code> on this to get the next record.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="IMMA.read">
+<code class="descclassname">IMMA.</code><code class="descname">read</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/IMMA/read.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#IMMA.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load all the records from an imma file.</p>
+<p>Just the same as <code class="docutils literal notranslate"><span class="pre">list(IMMA.get(filename)</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of file containing IMMA records.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of records - each record is a <a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>:</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="IMMA.write">
+<code class="descclassname">IMMA.</code><code class="descname">write</code><span class="sig-paren">(</span><em>record</em>, <em>fh</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/IMMA/write.html#write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#IMMA.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the given record to a file.</p>
+<p>File should be result of  <a class="reference external" href="https://docs.python.org/2/library/functions.html#open" title="(in Python v2.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">open()</span></code></a> (or anything with a <code class="docutils literal notranslate"><span class="pre">write</span></code> method).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>record</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>) – One IMMA record.</li>
+<li><strong>fh</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#file" title="(in Python v2.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file</span></code></a>) – File to write to (from <a class="reference external" href="https://docs.python.org/2/library/functions.html#open" title="(in Python v2.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">open()</span></code></a> function).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="instructions.html" title="How to use this dataset"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="A python API for IMMA data"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyIMMA</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    </div>
+  </body>
+</html>
