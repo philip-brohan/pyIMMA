@@ -47,6 +47,16 @@ def _decode(as_string,        # String representation of the attachment
 
 # Make an iterator returning IMMA records from a file
 class get:
+    """Turn an imma file into an iterator providing its records.
+
+    Args:
+        filename (:obj:`str`): Name of file containing IMMA records.
+
+    Returns:
+        :obj:`func`: iterator - call ``next()`` on this to get the next record.
+
+    """
+
     def __init__(self, filename):
         self.fh=open(filename,'r')
 
@@ -88,4 +98,16 @@ class get:
 
 # Function to read in all the records in a file
 def read(filename):
-   return list(get(filename))
+    """Load all the records from an imma file.
+
+    Just the same as ``list(IMMA.get(filename)``.
+
+    Args:
+        filename (:obj:`str`): Name of file containing IMMA records.
+
+    Returns:
+        :obj:`list`: List of records - each record is a :obj:`dict`:
+
+    """
+
+    return list(get(filename))
