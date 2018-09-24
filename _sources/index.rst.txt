@@ -11,11 +11,11 @@ This software supports all of IMMA version 0. Version 1 is not currently support
    :maxdepth: 1
 
    The python API </module_IMMA.rst>
-   How to use this dataset <instructions>
+   How to use this package <instructions>
 
 .. toctree::
    :maxdepth: 1
 
    Authors and acknowledgements <credits>
 
-This document is crown copyright (2018) and publisheded under the terms of the `Open Government Licence <https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/>`_. All code included is released under the terms of the `GNU Lesser General Public License <https://www.gnu.org/licenses/lgpl.html>`_.
+This document is crown copyright (2018) and published under the terms of the `Open Government Licence <https://www.nationalarchives.gov.uk/doc/open-government-licence/version/2/>`_. All code included is released under the terms of the `GNU Lesser General Public License <https://www.gnu.org/licenses/lgpl.html>`_.
