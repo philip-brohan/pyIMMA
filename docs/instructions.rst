@@ -11,3 +11,11 @@ To use this package, clone or download the repository and then install it with:
 
    python setup.py install --user
 
+Test it with:
+
+.. code-block:: sh
+
+   python setup.py test
+
+
+

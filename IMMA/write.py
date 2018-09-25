@@ -18,12 +18,9 @@ def write(record,fh):           # fh is a filehandle
     """
 
     Result = ""
-    for Attachment in record.attachments:
-        Result += record.encode(
-            Attachment,attachment_n)
-    Result=Result.rstrip()
+    for attachment_n in record['attachments']:
+        Result += _encode(record,attachment_n)
     fh.write( Result+"\n" )
-    return 1
 
 # Make a string representation of an attachment
 def _encode (attachment,
@@ -38,11 +35,11 @@ def _encode (attachment,
             # Scale to integer units for output
             if ( defns[params[i]][5] != None ):
                 Tmp = float(Tmp)/defns[params[i]][5];
-                Tmp = int(Tmp+0.5)  # nint
+                Tmp = int(round(Tmp))  # nint
 
             # Encode as base36 if required
             if ( defns[params[i]][6] == 2 ):
-                Tmp = encode_base36(Tmp);
+                Tmp = _encode_base36(Tmp);
 
             # Print as an string of the correct length
             if ( defns[params[i]][6] == 1 ):  # Integer
@@ -76,13 +73,14 @@ def _encode (attachment,
 # Done all the parameters, add the ID and length to the start
 # (except for core)
     if ( attachment_n != 0 ):
-        if ( attachment_n != 99 ):
-            Result = "%2d%2d%s" % (attachment_n, len(Result) + 4, Result)
-        else:
+        if ( attachment_n == 99 ):
             Result = "%2d 0%s" % (attachment_n, Result)
+        elif attachment_n == 8:
+            Result = "%2d2U%s" % (attachment_n, Result)
+        else:
+            Result = "%2d%2d%s" % (attachment_n, len(Result) + 4, Result)
 
     return Result
-
 
 # Convert a base 10 value in the range 0-35 to base36
 def _encode_base36(t):

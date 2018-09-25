@@ -46,7 +46,7 @@ setup(
     # Tests are in Meteorographica/tests organised as a module
     # (a unittest.TestSuite - just put __init__.py in all directories).
     # Name the module not the file here ('.' not '/').
-    #test_suite="IMMA.tests",
+    test_suite="IMMA.tests",
 
     # Other packages that your project depends on.
     install_requires=[

@@ -84,13 +84,14 @@ class get:
             if ( len(line) > 0 ):
                 Attachment_n = int(line[0:2])
                 Length       = line[2:4]
+                line = line[4:len(line)]
+                if Attachment_n==8: Length='102' # Ugly!
                 if( re.search("\S",Length)==None): 
                     Length = None
                 if ( Length != None ):
                     Length = int(Length)
                     if ( Length != 0 ):
                         Length = int(Length)-4
-                        line = line[4:len(line)]
                 if(attachment["%02d" % Attachment_n]==None ):
                     raise ValueError("Bad IMMA string","Unsupported attachment ID %d" % Attachment_n)
 

@@ -12,7 +12,7 @@
 #
 
 """
-This module provides a python API to `IMMA files <http://icoads.noaa.gov/e-doc/imma>`_.
+This module provides a Python API to `IMMA files <http://icoads.noaa.gov/e-doc/imma>`_.
 
 IMMA files are not necessarily consistent in their contents - each line can have a different set of extensions. So we can't treat the file as a table of data - instead we treat it as a list of records, and read those records one at a time.
 
