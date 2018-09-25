@@ -36,7 +36,7 @@
             </a></p>
 <h3><a href="../../index.html">Table Of Contents</a></h3>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../module_IMMA.html">The python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_IMMA.html">The Python API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../instructions.html">How to use this package</a></li>
 </ul>
 <ul>
@@ -149,13 +149,14 @@ Please <a href="https://github.com/philip-brohan/pyIMMA/issues/new">raise an iss
             <span class="k">if</span> <span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">):</span>
                 <span class="n">Attachment_n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
                 <span class="n">Length</span>       <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)]</span>
+                <span class="k">if</span> <span class="n">Attachment_n</span><span class="o">==</span><span class="mi">8</span><span class="p">:</span> <span class="n">Length</span><span class="o">=</span><span class="s1">&#39;102&#39;</span> <span class="c1"># Ugly!</span>
                 <span class="k">if</span><span class="p">(</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;\S&quot;</span><span class="p">,</span><span class="n">Length</span><span class="p">)</span><span class="o">==</span><span class="kc">None</span><span class="p">):</span> 
                     <span class="n">Length</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">if</span> <span class="p">(</span> <span class="n">Length</span> <span class="o">!=</span> <span class="kc">None</span> <span class="p">):</span>
                     <span class="n">Length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Length</span><span class="p">)</span>
                     <span class="k">if</span> <span class="p">(</span> <span class="n">Length</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">):</span>
                         <span class="n">Length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Length</span><span class="p">)</span><span class="o">-</span><span class="mi">4</span>
-                        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)]</span>
                 <span class="k">if</span><span class="p">(</span><span class="n">attachment</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">Attachment_n</span><span class="p">]</span><span class="o">==</span><span class="kc">None</span> <span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bad IMMA string&quot;</span><span class="p">,</span><span class="s2">&quot;Unsupported attachment ID </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">Attachment_n</span><span class="p">)</span>
 </div>

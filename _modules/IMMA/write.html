@@ -36,7 +36,7 @@
             </a></p>
 <h3><a href="../../index.html">Table Of Contents</a></h3>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../module_IMMA.html">The python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_IMMA.html">The Python API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../instructions.html">How to use this package</a></li>
 </ul>
 <ul>
@@ -83,12 +83,9 @@ Please <a href="https://github.com/philip-brohan/pyIMMA/issues/new">raise an iss
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">Attachment</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">attachments</span><span class="p">:</span>
-        <span class="n">Result</span> <span class="o">+=</span> <span class="n">record</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
-            <span class="n">Attachment</span><span class="p">,</span><span class="n">attachment_n</span><span class="p">)</span>
-    <span class="n">Result</span><span class="o">=</span><span class="n">Result</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-    <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span> <span class="n">Result</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="p">)</span></div>
-    <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">attachment_n</span> <span class="ow">in</span> <span class="n">record</span><span class="p">[</span><span class="s1">&#39;attachments&#39;</span><span class="p">]:</span>
+        <span class="n">Result</span> <span class="o">+=</span> <span class="n">_encode</span><span class="p">(</span><span class="n">record</span><span class="p">,</span><span class="n">attachment_n</span><span class="p">)</span></div>
+    <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span> <span class="n">Result</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="p">)</span>
 
 <span class="c1"># Make a string representation of an attachment</span>
 <span class="k">def</span> <span class="nf">_encode</span> <span class="p">(</span><span class="n">attachment</span><span class="p">,</span>
@@ -103,11 +100,11 @@ Please <a href="https://github.com/philip-brohan/pyIMMA/issues/new">raise an iss
             <span class="c1"># Scale to integer units for output</span>
             <span class="k">if</span> <span class="p">(</span> <span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">5</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">None</span> <span class="p">):</span>
                 <span class="n">Tmp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">Tmp</span><span class="p">)</span><span class="o">/</span><span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">5</span><span class="p">];</span>
-                <span class="n">Tmp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Tmp</span><span class="o">+</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># nint</span>
+                <span class="n">Tmp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">Tmp</span><span class="p">))</span>  <span class="c1"># nint</span>
 
             <span class="c1"># Encode as base36 if required</span>
             <span class="k">if</span> <span class="p">(</span> <span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span> <span class="p">):</span>
-                <span class="n">Tmp</span> <span class="o">=</span> <span class="n">encode_base36</span><span class="p">(</span><span class="n">Tmp</span><span class="p">);</span>
+                <span class="n">Tmp</span> <span class="o">=</span> <span class="n">_encode_base36</span><span class="p">(</span><span class="n">Tmp</span><span class="p">);</span>
 
             <span class="c1"># Print as an string of the correct length</span>
             <span class="k">if</span> <span class="p">(</span> <span class="n">defns</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">):</span>  <span class="c1"># Integer</span>
@@ -141,13 +138,14 @@ Please <a href="https://github.com/philip-brohan/pyIMMA/issues/new">raise an iss
 <span class="c1"># Done all the parameters, add the ID and length to the start</span>
 <span class="c1"># (except for core)</span>
     <span class="k">if</span> <span class="p">(</span> <span class="n">attachment_n</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">):</span>
-        <span class="k">if</span> <span class="p">(</span> <span class="n">attachment_n</span> <span class="o">!=</span> <span class="mi">99</span> <span class="p">):</span>
-            <span class="n">Result</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%2d%2d%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">attachment_n</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Result</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="n">Result</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="n">attachment_n</span> <span class="o">==</span> <span class="mi">99</span> <span class="p">):</span>
             <span class="n">Result</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%2d</span><span class="s2"> 0</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">attachment_n</span><span class="p">,</span> <span class="n">Result</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">attachment_n</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="n">Result</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%2d</span><span class="s2">2U</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">attachment_n</span><span class="p">,</span> <span class="n">Result</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Result</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%2d%2d%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">attachment_n</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Result</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span><span class="p">,</span> <span class="n">Result</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">Result</span>
-
 
 <span class="c1"># Convert a base 10 value in the range 0-35 to base36</span>
 <span class="k">def</span> <span class="nf">_encode_base36</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
