@@ -28,24 +28,24 @@ def _encode (attachment,
     params=parameters["%02d" % attachment_n]
     defns=definitions["%02d" % attachment_n]
     Result = ""
-    for i in range(len(params)):
-        if ( attachment[params[i]] != None):
-            Tmp = attachment[params[i]]
+    for param in params:
+        if ( attachment[param] != None):
+            Tmp = attachment[param]
 
             # Scale to integer units for output
-            if ( defns[params[i]][5] != None ):
-                Tmp = float(Tmp)/defns[params[i]][5];
+            if ( defns[param][5] != None ):
+                Tmp = float(Tmp)/defns[param][5];
                 Tmp = int(round(Tmp))  # nint
 
             # Encode as base36 if required
-            if ( defns[params[i]][6] == 2 ):
+            if ( defns[param][6] == 2 ):
                 Tmp = _encode_base36(Tmp);
 
             # Print as an string of the correct length
-            if ( defns[params[i]][6] == 1 ):  # Integer
+            if ( defns[param][6] == 1 ):  # Integer
 
-                if ( defns[params[i]][0] != None ):
-                    Lstring = "%%%dd" % (defns[params[i]][0])
+                if ( defns[param][0] != None ):
+                    Lstring = "%%%dd" % (defns[param][0])
                     Tmp = Lstring % (Tmp)
                 else:
                     # Undefined length - don't try to constrain it
@@ -53,8 +53,8 @@ def _encode (attachment,
 
             else:                                      # String
 
-                if ( defns[params[i]][0] != None ):
-                    Lstring = "%%-%ds" % (defns[params[i]][0])
+                if ( defns[param][0] != None ):
+                    Lstring = "%%-%ds" % (defns[param][0])
                     Tmp = Lstring % (Tmp)
                 else:
                     Tmp = "%-s" % (Tmp)
@@ -63,8 +63,8 @@ def _encode (attachment,
 
         else:  # Undefined data - make a blank string of the corect length
 
-            if ( defns[params[i]][0] != None ):
-                Lstring = "%%%ds" % (defns[params[i]][0])
+            if ( defns[param][0] != None ):
+                Lstring = "%%%ds" % (defns[param][0])
                 Result += Lstring % (" ")
 
             else: # Undefined data with unknown length - should never happen

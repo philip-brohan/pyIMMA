@@ -20,29 +20,31 @@ def _decode(as_string,        # String representation of the attachment
 
     Decoded={}
     Position = 0;
-    for i in range(len(params)):
-        if ( defns[params[i]][0] != None ):
-            Decoded[params[i]] = as_string[Position:Position+defns[params[i]][0]]
-            Position += defns[params[i]][0]
+    for param in params:
+        if ( defns[param][0] != None ):
+            Value = as_string[Position:Position+defns[param][0]]
+            Position += defns[param][0]
         else:                  # Undefined length - so slurp all the data
-            Decoded[params[i]] = as_string[Position:len(as_string)]
-            Decoded[params[i]] = Decoded[params[i]].rstrip("\n")
+            Value = as_string[Position:len(as_string)]
+            Value = Value.rstrip("\n")
             Position = len(as_string)
 
     # Blanks mean value is undefined
-        if( re.search("\S",Decoded[params[i]]) == None ):
-            Decoded[params[i]] = None
+        if( re.search("\S",Value) == None ):
+            Value = None
+            Decoded[param]=Value
             continue    #  Next parameter
 
-        if ( defns[params[i]][6] == 2 ):
-            Decoded[params[i]] = _decode_base36(Decoded[params[i]])
+        if ( defns[param][6] == 2 ):
+            Value = _decode_base36(Value)
 
-        if ( defns[params[i]][6] == 1 ):
-            Decoded[params[i]] = int(Decoded[params[i]])
+        if ( defns[param][6] == 1 ):
+            Value = int(Value)
 
-        if ( defns[params[i]][5] != None and
-             defns[params[i]][5] != 1.0 ):
-            Decoded[params[i]] = int(Decoded[params[i]])*defns[params[i]][5];
+        if ( defns[param][5] != None and
+             defns[param][5] != 1.0 ):
+            Value = int(Value)*defns[param][5];
+        Decoded[param]=Value
     return Decoded
 
 # Make an iterator returning IMMA records from a file
