@@ -1,9 +1,9 @@
 # Read in IMMA records from files.
 
 import re     #  Regular Expressions
-from structure import attachment
-from structure import parameters
-from structure import definitions
+from .structure import attachment
+from .structure import parameters
+from .structure import definitions
 
 # Write out a record to a file
 def write(record,fh):           # fh is a filehandle
