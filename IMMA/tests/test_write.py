@@ -13,9 +13,9 @@ class TestWrite(unittest.TestCase):
  
     # Start simple
     def test_write_simple(self):
-        obs=pickle.load(open(
-             "%s/pickled_samples/basic.pkl" % thisdir,
-                            "rb" ) )
+        with open("%s/pickled_samples/basic.pkl" % thisdir,
+                            "rb" ) as pf:
+            obs=pickle.load(pf)
         tmfn=tempfile.NamedTemporaryFile(delete=False)
         for o in obs:
            IMMA.write(o,tmfn)
@@ -27,9 +27,9 @@ class TestWrite(unittest.TestCase):
 
     # Variable sets of attachments
     def test_write_variable(self):
-        obs=pickle.load(open(
-             "%s/pickled_samples/mixed_attachments.pkl" % thisdir,
-                            "rb" ) )
+        with open("%s/pickled_samples/mixed_attachments.pkl" % thisdir,
+                            "rb" ) as pf:
+            obs=pickle.load(pf)
         tmfn=tempfile.NamedTemporaryFile(delete=False)
         for o in obs:
            IMMA.write(o,tmfn)
@@ -41,9 +41,9 @@ class TestWrite(unittest.TestCase):
 
     # Unusual attachments
     def test_write_unusual(self):
-        obs=pickle.load(open(
-             "%s/pickled_samples/IMMA1_0+1+5+6+7+8+9+98+99.pkl" % thisdir,
-                            "rb" ) )
+        with open("%s/pickled_samples/IMMA1_0+1+5+6+7+8+9+98+99.pkl" % thisdir,
+                            "rb" ) as pf:
+            obs=pickle.load(pf)
         tmfn=tempfile.NamedTemporaryFile(delete=False)
         for o in obs:
            IMMA.write(o,tmfn)

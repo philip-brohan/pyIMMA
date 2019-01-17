@@ -2,23 +2,23 @@
 ### Data for each attachment type
 ###
 
-attachment  = {}  # Dictionaries, so indexed by %02d string
-parameters  = {}
-definitions = {}
+attachment  = [None]*100
+parameters  = [None]*100
+definitions = [None]*100
 
 #
 # Core attachment
 #
-attachment['00'] = 'core'
+attachment[0] = 'core'
 
 # List of parameters in core section
 # In the order they are in on disc
-parameters['00'] = ('YR','MO','DY','HR','LAT','LON','IM','ATTC',
-                  'TI','LI','DS','VS','NID','II','ID','C1','DI',
-                  'D','WI','W','VI','VV','WW','W1','SLP','A',
-                  'PPP','IT','AT','WBTI','WBT','DPTI','DPT','SI',
-                  'SST','N','NH','CL','HI','H','CM','CH','WD',
-                  'WP','WH','SD','SP','SH')
+parameters[0] = ('YR','MO','DY','HR','LAT','LON','IM','ATTC',
+                 'TI','LI','DS','VS','NID','II','ID','C1','DI',
+                 'D','WI','W','VI','VV','WW','W1','SLP','A',
+                 'PPP','IT','AT','WBTI','WBT','DPTI','DPT','SI',
+                 'SST','N','NH','CL','HI','H','CM','CH','WD',
+                 'WP','WH','SD','SP','SH')
 
 # For each parameter, provide an array specifying:
 #    Its length in bytes, on disc,
@@ -28,7 +28,7 @@ parameters['00'] = ('YR','MO','DY','HR','LAT','LON','IM','ATTC',
 #    Its maximum value (alternative representation)
 #    Its units scale
 #    Its encoding (1 = integer, 3= character, 2= base36)
-definitions['00'] = {
+definitions[0] = {
     'YR'   : ( 4, 1600.,  2024.,   None,    None,  1.,    1 ),
     'MO'   : ( 2, 1.,     12.,     None,    None,  1.,    1 ),
     'DY'   : ( 2, 1.,     31.,     None,    None,  1.,    1 ),
@@ -83,16 +83,16 @@ definitions['00'] = {
 # ICOADS attachment
 #
 
-attachment['01'] = 'icoads'
+attachment[1] = 'icoads'
 
 # List of parameters in icoads section
 # In the order they are in on disc
-parameters['01'] = ('BSI','B10','B1','DCK','SID','PT','DUPS','DUPC','TC',
-	              'PB','WX','SX','C2','SQZ','SQA','AQZ','AQA','UQZ','UQA',
-	              'VQZ','VQA','PQZ','PQA','DQZ','DQA','ND','SF','AF',
-	              'UF','VF','PF','RF','ZNC','WNC','BNC','XNC','YNC',
-	              'PNC','ANC','GNC','DNC','SNC','CNC','ENC','FNC','TNC',
-	              'QCE','LZ','QCZ')
+parameters[1] = ('BSI','B10','B1','DCK','SID','PT','DUPS','DUPC','TC',
+	         'PB','WX','SX','C2','SQZ','SQA','AQZ','AQA','UQZ','UQA',
+	         'VQZ','VQA','PQZ','PQA','DQZ','DQA','ND','SF','AF',
+	         'UF','VF','PF','RF','ZNC','WNC','BNC','XNC','YNC',
+	         'PNC','ANC','GNC','DNC','SNC','CNC','ENC','FNC','TNC',
+	         'QCE','LZ','QCZ')
 
 # For each parameter, provide an array specifying:
 #    Its length in bytes, on disc,
@@ -102,7 +102,7 @@ parameters['01'] = ('BSI','B10','B1','DCK','SID','PT','DUPS','DUPC','TC',
 #    Its maximum value (alternative representation)
 #    Its units scale
 #    Its encoding (1 = integer, 3= character, 2= base36)
-definitions['01'] = {
+definitions[1] = {
     'BSI'  : ( 1,  None,  None,  None,  None, 1., 1 ),
     'B10'  : ( 3, 1.,    648.,   None,  None, 1., 1 ),
     'B1'   : ( 2, 0.,    99.,    None,  None, 1., 1 ),
@@ -158,17 +158,17 @@ definitions['01'] = {
 # IMMT2 attachment (now deprecated)
 #
 
-attachment['02'] = 'immt2'
+attachment[2] = 'immt2'
 
 # List of parameters in IMMT2 section
 # In the order they are in on disc
-parameters['02'] = ('OS','OP','FM','IX','W2','SGN','SGT','SGH',
-                  'WMI','SD2','SP2','SH2','IS','ES','RS','IC1',
-                  'IC2','IC3','IC4','IC5','IR','RRR','TR','QCI',
-                  'QI1','QI2','QI3','QI4','QI5','QI6','QI7','QI8',
-                  'QI9','QI10','QI11','QI12','QI13','QI14','QI15',
-                  'QI16','QI17','QI18','QI19','QI20','QI21','HDG',
-                  'COG','SOG','SLL','SLHH','RWD','RWS')
+parameters[2] = ('OS','OP','FM','IX','W2','SGN','SGT','SGH',
+                 'WMI','SD2','SP2','SH2','IS','ES','RS','IC1',
+                 'IC2','IC3','IC4','IC5','IR','RRR','TR','QCI',
+                 'QI1','QI2','QI3','QI4','QI5','QI6','QI7','QI8',
+                 'QI9','QI10','QI11','QI12','QI13','QI14','QI15',
+                 'QI16','QI17','QI18','QI19','QI20','QI21','HDG',
+                 'COG','SOG','SLL','SLHH','RWD','RWS')
 
 # For each parameter, provide an array specifying:
 #    Its length in bytes, on disc,
@@ -178,7 +178,7 @@ parameters['02'] = ('OS','OP','FM','IX','W2','SGN','SGT','SGH',
 #    Its maximum value (alternative representation)
 #    Its units scale
 #    Its encoding (1 = integer, 3= character, 2= base36)
-definitions['02'] = {
+definitions[2] = {
     'OS'   : ( 1, 0.,   6.,   None,  None,  1.,  1 ),
     'OP'   : ( 1, 0.,   9.,   None,  None,  1.,  1 ),
     'FM'   : ( 2, 0.,   8.,   None,  None,  1.,  1 ),
@@ -237,13 +237,13 @@ definitions['02'] = {
 # Model Quality Control attachment
 #
 
-attachment['03'] = 'mqc' # now deprecated
+attachment[3] = 'mqc' # now deprecated
 
 # List of parameters in mqc section
 # In the order they are in on disc
-parameters['03'] = ('CCCC','BUID','BMP','BSWU','SWU','BSWV','SWV','BSAT',
-                    'BSRH','SRH','SIX','BSST','MST','MSH','BY','BM','BD',
-                    'BH','BFL')
+parameters[3] = ('CCCC','BUID','BMP','BSWU','SWU','BSWV','SWV','BSAT',
+                 'BSRH','SRH','SIX','BSST','MST','MSH','BY','BM','BD',
+                 'BH','BFL')
 
 # For each parameter, provide an array specifying:
 #    Its length in bytes, on disc,
@@ -253,7 +253,7 @@ parameters['03'] = ('CCCC','BUID','BMP','BSWU','SWU','BSWV','SWV','BSAT',
 #    Its maximum value (alternative representation)
 #    Its units scale
 #    Its encoding (1 = integer, 3= character, 2= base36)
-definitions['03'] = {
+definitions[3] = {
     'CCCC' : ( 4, 65.,   90.,    None,  None,  None,  3 ),
     'BUID' : ( 6, 48.,   57.,    65.,   90.,   None,  3 ),
     'BMP'  : ( 5, 870.0, 1074.6, None,  None,  0.1,   1 ),
@@ -279,12 +279,12 @@ definitions['03'] = {
 # Metadata attachment
 #
 
-attachment['04'] = 'metadata' # now deprecated
+attachment[4] = 'metadata' # now deprecated
 
 # List of parameters in metadata section
 # In the order they are in on disc
-parameters['04'] = ('C1M','OPM','KOV','COR','TOB','TOT','EOT','LOT','TOH','EOH',
-	                'SIM','LOV','DOS','HOP','HOT','HOB','HOA','SMF','SME','SMV')
+parameters[4] = ('C1M','OPM','KOV','COR','TOB','TOT','EOT','LOT','TOH','EOH',
+	         'SIM','LOV','DOS','HOP','HOT','HOB','HOA','SMF','SME','SMV')
 
 # For each parameter, provide an array specifying:
 #    Its length in bytes, on disc,
@@ -294,7 +294,7 @@ parameters['04'] = ('C1M','OPM','KOV','COR','TOB','TOT','EOT','LOT','TOH','EOH',
 #    Its maximum value (alternative representation)
 #    Its units scale
 #    Its encoding (1 = integer, 3= character, 2= base36)
-definitions['04'] = {
+definitions[4] = {
     'C1M' : ( 2, 65., 90.,    None,  None,  None,  3 ),
     'OPM' : ( 2, 0.,  99.,    None,  None,  1.,    1 ),
     'KOV' : ( 2, 32., 126.,   None,  None,  None,  3 ),
@@ -321,19 +321,19 @@ definitions['04'] = {
 # IMMT attachment
 #
 
-attachment['05'] = 'IMMT-5/FM 13'
+attachment[5] = 'IMMT-5/FM 13'
 
 # List of parameters in historical section
 # In the order they are in on disc
-parameters['05'] = ('OS','OP','FM','IMMV','IX','W2','WMI','SD2',
-                    'SP2','SH2','IS','ES','RS','IC1','IC2','IC3',
-                    'IC4','IC5','IR','RRR','TR','NU','QCI','QI1',
-                    'QI2','QI3','QI4','QI5','QI6','QI7','QI8','QI9',
-                    'QI10','QI11','QI12','QI13','QI14','QI15','QI16',
-                    'QI17','QI18','QI19','QI20','QI21','HDG','COG',
-                    'SOG','SLL','SLHH','RWD','RWS','QI22','QI23',
-                    'QI24','QI25','QI26','QI27','QI28','QI29','RH',
-                    'RHI','AWSI','IMONO')
+parameters[5] = ('OS','OP','FM','IMMV','IX','W2','WMI','SD2',
+                 'SP2','SH2','IS','ES','RS','IC1','IC2','IC3',
+                 'IC4','IC5','IR','RRR','TR','NU','QCI','QI1',
+                 'QI2','QI3','QI4','QI5','QI6','QI7','QI8','QI9',
+                 'QI10','QI11','QI12','QI13','QI14','QI15','QI16',
+                 'QI17','QI18','QI19','QI20','QI21','HDG','COG',
+                 'SOG','SLL','SLHH','RWD','RWS','QI22','QI23',
+                 'QI24','QI25','QI26','QI27','QI28','QI29','RH',
+                 'RHI','AWSI','IMONO')
 
 # For each parameter, provide an array specifying:
 #    Its length in bytes, on disc,
@@ -343,7 +343,7 @@ parameters['05'] = ('OS','OP','FM','IMMV','IX','W2','WMI','SD2',
 #    Its maximum value (alternative representation)
 #    Its units scale
 #    Its encoding (1 = integer, 3= character, 2= base36)
-definitions['05'] = {
+definitions[5] = {
     'OS'   : ( 1,   0.,       6.,     None,    None,   1.,  1 ),
     'OP'   : ( 1,   0.,       9.,     None,    None,   1.,  1 ),
     'FM'   : ( 1,   0.,      36.,     None,    None,   1.,  2 ),
@@ -413,13 +413,13 @@ definitions['05'] = {
 # Model quality control attachment
 #
 
-attachment['06'] = 'Model quality control'
+attachment[6] = 'Model quality control'
 
 # List of parameters in metadata section
 # In the order they are in on disc
-parameters['06'] = ('CCCC','BUID','FBSRC','BMP','BSWU','SWU','BSWV',
-                    'SWV','BSAT','BSRH','SRH','BSST','MST','MSH',
-                    'BY','BM','BD','BH','BFL')
+parameters[6] = ('CCCC','BUID','FBSRC','BMP','BSWU','SWU','BSWV',
+                 'SWV','BSAT','BSRH','SRH','BSST','MST','MSH',
+                 'BY','BM','BD','BH','BFL')
 
 # For each parameter, provide an array specifying:
 #    Its length in bytes, on disc,
@@ -429,7 +429,7 @@ parameters['06'] = ('CCCC','BUID','FBSRC','BMP','BSWU','SWU','BSWV',
 #    Its maximum value (alternative representation)
 #    Its units scale
 #    Its encoding (1 = integer, 3= character, 2= base36)
-definitions['06'] = {
+definitions[6] = {
     'CCCC'  : ( 4,    65.,    90.,    None,    None, None,   3 ),
     'BUID'  : ( 6,    48.,    57.,     65.,     90., None,   3 ),
     'FBSRC' : ( 1,     0.,     0.,    None,    None,   1.,   1 ),
@@ -455,13 +455,13 @@ definitions['06'] = {
 # Ship metadata attachment
 #
 
-attachment['07'] = 'Ship metadata'
+attachment[7] = 'Ship metadata'
 
 # List of parameters in metadata section
 # In the order they are in on disc
-parameters['07'] = ('MDS','C1M','OPM','KOV','COR','TOB','TOT','EOT',
-                    'LOT','TOH','EOH','SIM','LOV','DOS','HOP','HOT',
-                    'HOB','HOA','SMF','SME','SMV')
+parameters[7] = ('MDS','C1M','OPM','KOV','COR','TOB','TOT','EOT',
+                 'LOT','TOH','EOH','SIM','LOV','DOS','HOP','HOT',
+                 'HOB','HOA','SMF','SME','SMV')
 
 # For each parameter, provide an array specifying:
 #    Its length in bytes, on disc,
@@ -471,7 +471,7 @@ parameters['07'] = ('MDS','C1M','OPM','KOV','COR','TOB','TOT','EOT',
 #    Its maximum value (alternative representation)
 #    Its units scale
 #    Its encoding (1 = integer, 3= character, 2= base36)
-definitions['07'] = {
+definitions[7] = {
     'MDS' : ( 1,    0.,      1.,    None,    None,    1.,  1 ),
     'C1M' : ( 2,    None,  None,    None,    None,  None,  3 ),
     'OPM' : ( 2,    0.,     99.,    None,    None,    1.,  1 ),
@@ -499,13 +499,13 @@ definitions['07'] = {
 # Near-surface oceanographic data attachment
 #
 
-attachment['08'] = 'NOCN'
+attachment[8] = 'NOCN'
 
 # List of parameters in metadata section
 # In the order they are in on disc
-parameters['08'] = ('OTV','OTZ','OSV','OSZ','OOV','OOZ','OPV','OPZ',
-                    'OSIV','OSIZ','ONV','ONZ','OPHV','OPHZ','OCV',
-                    'OCZ','OAV','OAZ','OPCV','OPCZ','ODV','ODZ','PUID')
+parameters[8] = ('OTV','OTZ','OSV','OSZ','OOV','OOZ','OPV','OPZ',
+                 'OSIV','OSIZ','ONV','ONZ','OPHV','OPHZ','OCV',
+                 'OCZ','OAV','OAZ','OPCV','OPCZ','ODV','ODZ','PUID')
 
 # For each parameter, provide an array specifying:
 #    Its length in bytes, on disc,
@@ -515,7 +515,7 @@ parameters['08'] = ('OTV','OTZ','OSV','OSZ','OOV','OOZ','OPV','OPZ',
 #    Its maximum value (alternative representation)
 #    Its units scale
 #    Its encoding (1 = integer, 3= character, 2= base36)
-definitions['08'] = {
+definitions[8] = {
     'OTV'  : (  5,  -3.,  38.999,    None,    None,  0.001,  1 ),
     'OTZ'  : (  4,   0.,   99.99,    None,    None,   0.01,  1 ),
     'OSV'  : (  5,   0.,  40.999,    None,    None,  0.001,  1 ),
@@ -545,12 +545,12 @@ definitions['08'] = {
 # Edited cloud report attachment
 #
 
-attachment['09'] = 'ECR'
+attachment[9] = 'ECR'
 
 # List of parameters in metadata section
 # In the order they are in on disc
-parameters['09'] = ('CCe','WWe','Ne','NHe','He','CLe','CMe','CHe',
-                    'AM','AH','UM','UH','SBI','SA','RI')
+parameters[9] = ('CCe','WWe','Ne','NHe','He','CLe','CMe','CHe',
+                 'AM','AH','UM','UH','SBI','SA','RI')
 
 # For each parameter, provide an array specifying:
 #    Its length in bytes, on disc,
@@ -560,7 +560,7 @@ parameters['09'] = ('CCe','WWe','Ne','NHe','He','CLe','CMe','CHe',
 #    Its maximum value (alternative representation)
 #    Its units scale
 #    Its encoding (1 = integer, 3= character, 2= base36)
-definitions['09'] = {
+definitions[9] = {
     'CCe' : ( 1,   0.,  13.,    None,    None,    1.,  2 ),
     'WWe' : ( 2,   0.,  99.,    None,    None,    1.,  1 ),
     'Ne'  : ( 1,   0.,   8.,    None,    None,    1.,  1 ),
@@ -582,12 +582,12 @@ definitions['09'] = {
 # Reanalysis QC/Feedback attachment
 #
 
-attachment['95'] = 'Rean-qc'
+attachment[95] = 'Rean-qc'
 
 # List of parameters in metadata section
 # In the order they are in on disc
-parameters['95'] = ('ICNR','FNR','DPRO','DPRP','UFR','MFGR','MFGSR',
-                    'MAR','MASR','BCR','ARCR','CDR','ASIR')
+parameters[95] = ('ICNR','FNR','DPRO','DPRP','UFR','MFGR','MFGSR',
+                  'MAR','MASR','BCR','ARCR','CDR','ASIR')
 
 # For each parameter, provide an array specifying:
 #    Its length in bytes, on disc,
@@ -597,7 +597,7 @@ parameters['95'] = ('ICNR','FNR','DPRO','DPRP','UFR','MFGR','MFGSR',
 #    Its maximum value (alternative representation)
 #    Its units scale
 #    Its encoding (1 = integer, 3= character, 2= base36)
-definitions['95'] = {
+definitions[95] = {
     'ICNR'  : ( 2,       0.,      99.,    None,    None,     1,  1 ),
     'FNR'   : ( 2,       1.,      99.,    None,    None,     1,  1 ),
     'DPRO'  : ( 2,       1.,      99.,    None,    None,     1,  1 ),
@@ -617,13 +617,13 @@ definitions['95'] = {
 # ICOADS Value-Added Database attachment
 #
 
-attachment['96'] = 'IVAD'
+attachment[96] = 'IVAD'
 
 # List of parameters in metadata section
 # In the order they are in on disc
-parameters['96'] = ('ICNI','FNI','JVAD','VAD','IVAU1','JVAU1','VAU1','IVAU2',
-                    'JVAU2','VAU2','IVAU3','JVAU3','VAU3','VQC','ARCI','CDR',
-                    'ASII')
+parameters[96] = ('ICNI','FNI','JVAD','VAD','IVAU1','JVAU1','VAU1','IVAU2',
+                  'JVAU2','VAU2','IVAU3','JVAU3','VAU3','VQC','ARCI','CDR',
+                  'ASII')
 
 # For each parameter, provide an array specifying:
 #    Its length in bytes, on disc,
@@ -633,7 +633,7 @@ parameters['96'] = ('ICNI','FNI','JVAD','VAD','IVAU1','JVAU1','VAU1','IVAU2',
 #    Its maximum value (alternative representation)
 #    Its units scale
 #    Its encoding (1 = integer, 3= character, 2= base36)
-definitions['96'] = {
+definitions[96] = {
     'ICNI'  : ( 2,        0.,       99.,    None,    None,    1.,  1 ),
     'FNI'   : ( 2,        1.,       99.,    None,    None,    1.,  1 ),
     'JVAD'  : ( 1,        0.,       36.,    None,    None,    1.,  2 ),
@@ -657,11 +657,11 @@ definitions['96'] = {
 # Error attachment
 #
 
-attachment['97'] = 'Error'
+attachment[97] = 'Error'
 
 # List of parameters in supplemental section
 # In the order they are in on disc
-parameters['97'] = ('ICNE','FNE','CEF','ERRD','ARCE','CDE','ASIE');
+parameters[97] = ('ICNE','FNE','CEF','ERRD','ARCE','CDE','ASIE');
 
 # For each parameter, provide an array specifying:
 #    Its length in bytes, on disc,
@@ -671,7 +671,7 @@ parameters['97'] = ('ICNE','FNE','CEF','ERRD','ARCE','CDE','ASIE');
 #    Its maximum value (alternative representation)
 #    Its units scale
 #    Its encoding (1 = integer, 3= character, 2= base36)
-definitions['97'] = {
+definitions[97] = {
      'ICNE' : (    2,        0.,       99.,    None,    None,    1.,  1 ),
      'FNE'  : (    2,        1.,       99.,    None,    None,    1.,  1 ),
      'CEF'  : (    1,        0.,        1.,    None,    None,    1.,  1 ),
@@ -685,11 +685,11 @@ definitions['97'] = {
 # Unique report attachment
 #
 
-attachment['98'] = 'UIda'
+attachment[98] = 'UIda'
 
 # List of parameters in supplemental section
 # In the order they are in on disc
-parameters['98'] = ('UID','RN1','RN2','RN3','RSA','IRF')
+parameters[98] = ('UID','RN1','RN2','RN3','RSA','IRF')
 
 # For each parameter, provide an array specifying:
 #    Its length in bytes, on disc,
@@ -699,7 +699,7 @@ parameters['98'] = ('UID','RN1','RN2','RN3','RSA','IRF')
 #    Its maximum value (alternative representation)
 #    Its units scale
 #    Its encoding (1 = integer, 3= character, 2= base36)
-definitions['98'] = {
+definitions[98] = {
      'UID' : ( 6,  None,  None,    None,    None,  None,  3 ),
      'RN1' : ( 1,     0,    36,    None,    None,    1.,  2 ),
      'RN2' : ( 1,     0,    36,    None,    None,    1.,  2 ),
@@ -712,11 +712,11 @@ definitions['98'] = {
 # Supplemental data attachment
 #
 
-attachment['99'] = 'supplemental'
+attachment[99] = 'supplemental'
 
 # List of parameters in supplemental section
 # In the order they are in on disc
-parameters['99'] = (['SUPD']);
+parameters[99] = (['SUPD']);
 
 # For each parameter, provide an array specifying:
 #    Its length in bytes, on disc,
@@ -726,7 +726,7 @@ parameters['99'] = (['SUPD']);
 #    Its maximum value (alternative representation)
 #    Its units scale
 #    Its encoding (1 = integer, 3= character, 2= base36)
-definitions['99'] = {
+definitions[99] = {
     'SUPD' : ( None,  None,  None,  None,  None,  None,  3 )
 	}
 

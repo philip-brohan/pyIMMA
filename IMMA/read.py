@@ -1,6 +1,6 @@
 # Read in IMMA records from files.
 
-import re     #  Regular Expressions
+import gzip
 from .structure import attachment
 from .structure import parameters
 from .structure import definitions
@@ -15,8 +15,8 @@ def _decode(as_string,        # String representation of the attachment
             attachment_n):    # Attachment number
     if( as_string== None ):
         raise ValueError("Bad IMMA string: No data to decode")
-    params=parameters["%02d" % attachment_n]
-    defns=definitions["%02d" % attachment_n]
+    params=parameters[attachment_n]
+    defns=definitions[attachment_n]
 
     Decoded={}
     Position = 0;
@@ -30,7 +30,7 @@ def _decode(as_string,        # String representation of the attachment
             Position = len(as_string)
 
     # Blanks mean value is undefined
-        if( re.search("\S",Value) == None ):
+        if Value.isspace():
             Value = None
             Decoded[param]=Value
             continue    #  Next parameter
@@ -60,14 +60,23 @@ class get:
     """
 
     def __init__(self, filename):
-        self.fh=open(filename,'r')
+        if filename.endswith('.gz'):
+            self.fh=gzip.open(filename,'rt',
+                              encoding="ascii",
+                              errors="surrogateescape")
+        else:
+            self.fh=open(filename,
+                         encoding="ascii",
+                         errors="surrogateescape")
 
     def __iter__(self):
         return self
 
     def __next__(self): # Python 3: def __next__(self)
         line = self.fh.readline();
-        if(line == ""): raise StopIteration
+        if(line == ""):
+            self.fh.close()
+            raise StopIteration
         line=line.rstrip("\n")       # Remove trailing newline
         Attachment_n = 0;            # Core always first
         Length     = 108;
@@ -88,13 +97,13 @@ class get:
                 Length       = line[2:4]
                 line = line[4:len(line)]
                 if Attachment_n==8: Length='102' # Ugly!
-                if( re.search("\S",Length)==None): 
+                if Length.isspace(): 
                     Length = None
                 if ( Length != None ):
                     Length = int(Length)
                     if ( Length != 0 ):
                         Length = int(Length)-4
-                if(attachment["%02d" % Attachment_n]==None ):
+                if(attachment[Attachment_n]==None ):
                     raise ValueError("Bad IMMA string","Unsupported attachment ID %d" % Attachment_n)
 
         return record

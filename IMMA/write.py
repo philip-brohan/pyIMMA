@@ -20,13 +20,13 @@ def write(record,fh):           # fh is a filehandle
     Result = ""
     for attachment_n in record['attachments']:
         Result += _encode(record,attachment_n)
-    fh.write( Result+"\n" )
+    fh.write( bytes(Result+"\n",  encoding="ascii", errors="surrogateescape") )
 
 # Make a string representation of an attachment
 def _encode (attachment,
              attachment_n):    # Attachment number
-    params=parameters["%02d" % attachment_n]
-    defns=definitions["%02d" % attachment_n]
+    params=parameters[attachment_n]
+    defns=definitions[attachment_n]
     Result = ""
     for param in params:
         if ( attachment[param] != None):
