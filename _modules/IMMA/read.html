@@ -4,12 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>IMMA.read &#8212; A Python API for IMMA records</title>
     <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
@@ -65,10 +65,10 @@ Please <a href="https://github.com/philip-brohan/pyIMMA/issues/new">raise an iss
   <h1>Source code for IMMA.read</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Read in IMMA records from files.</span>
 
-<span class="kn">import</span> <span class="nn">re</span>     <span class="c1">#  Regular Expressions</span>
-<span class="kn">from</span> <span class="nn">structure</span> <span class="k">import</span> <span class="n">attachment</span>
-<span class="kn">from</span> <span class="nn">structure</span> <span class="k">import</span> <span class="n">parameters</span>
-<span class="kn">from</span> <span class="nn">structure</span> <span class="k">import</span> <span class="n">definitions</span>
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">from</span> <span class="nn">.structure</span> <span class="k">import</span> <span class="n">attachment</span>
+<span class="kn">from</span> <span class="nn">.structure</span> <span class="k">import</span> <span class="n">parameters</span>
+<span class="kn">from</span> <span class="nn">.structure</span> <span class="k">import</span> <span class="n">definitions</span>
 
 <span class="c1"># Convert a single-digit base36 value to base 10</span>
 <span class="k">def</span> <span class="nf">_decode_base36</span><span class="p">(</span><span class="n">t</span><span class="p">):</span> 
@@ -80,8 +80,8 @@ Please <a href="https://github.com/philip-brohan/pyIMMA/issues/new">raise an iss
             <span class="n">attachment_n</span><span class="p">):</span>    <span class="c1"># Attachment number</span>
     <span class="k">if</span><span class="p">(</span> <span class="n">as_string</span><span class="o">==</span> <span class="kc">None</span> <span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bad IMMA string: No data to decode&quot;</span><span class="p">)</span>
-    <span class="n">params</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">attachment_n</span><span class="p">]</span>
-    <span class="n">defns</span><span class="o">=</span><span class="n">definitions</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">attachment_n</span><span class="p">]</span>
+    <span class="n">params</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="n">attachment_n</span><span class="p">]</span>
+    <span class="n">defns</span><span class="o">=</span><span class="n">definitions</span><span class="p">[</span><span class="n">attachment_n</span><span class="p">]</span>
 
     <span class="n">Decoded</span><span class="o">=</span><span class="p">{}</span>
     <span class="n">Position</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -95,7 +95,7 @@ Please <a href="https://github.com/philip-brohan/pyIMMA/issues/new">raise an iss
             <span class="n">Position</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">as_string</span><span class="p">)</span>
 
     <span class="c1"># Blanks mean value is undefined</span>
-        <span class="k">if</span><span class="p">(</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;\S&quot;</span><span class="p">,</span><span class="n">Value</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span> <span class="p">):</span>
+        <span class="k">if</span> <span class="n">Value</span><span class="o">.</span><span class="n">isspace</span><span class="p">():</span>
             <span class="n">Value</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">Decoded</span><span class="p">[</span><span class="n">param</span><span class="p">]</span><span class="o">=</span><span class="n">Value</span>
             <span class="k">continue</span>    <span class="c1">#  Next parameter</span>
@@ -125,14 +125,23 @@ Please <a href="https://github.com/philip-brohan/pyIMMA/issues/new">raise an iss
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fh</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.gz&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fh</span><span class="o">=</span><span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;rt&#39;</span><span class="p">,</span>
+                              <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;ascii&quot;</span><span class="p">,</span>
+                              <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;surrogateescape&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fh</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span>
+                         <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;ascii&quot;</span><span class="p">,</span>
+                         <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;surrogateescape&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c1"># Python 3: def __next__(self)</span>
+    <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c1"># Python 3: def __next__(self)</span>
         <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fh</span><span class="o">.</span><span class="n">readline</span><span class="p">();</span>
-        <span class="k">if</span><span class="p">(</span><span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">):</span> <span class="k">raise</span> <span class="ne">StopIteration</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
         <span class="n">line</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>       <span class="c1"># Remove trailing newline</span>
         <span class="n">Attachment_n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>            <span class="c1"># Core always first</span>
         <span class="n">Length</span>     <span class="o">=</span> <span class="mi">108</span><span class="p">;</span>
@@ -153,16 +162,16 @@ Please <a href="https://github.com/philip-brohan/pyIMMA/issues/new">raise an iss
                 <span class="n">Length</span>       <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
                 <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)]</span>
                 <span class="k">if</span> <span class="n">Attachment_n</span><span class="o">==</span><span class="mi">8</span><span class="p">:</span> <span class="n">Length</span><span class="o">=</span><span class="s1">&#39;102&#39;</span> <span class="c1"># Ugly!</span>
-                <span class="k">if</span><span class="p">(</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;\S&quot;</span><span class="p">,</span><span class="n">Length</span><span class="p">)</span><span class="o">==</span><span class="kc">None</span><span class="p">):</span> 
+                <span class="k">if</span> <span class="n">Length</span><span class="o">.</span><span class="n">isspace</span><span class="p">():</span> 
                     <span class="n">Length</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">if</span> <span class="p">(</span> <span class="n">Length</span> <span class="o">!=</span> <span class="kc">None</span> <span class="p">):</span>
                     <span class="n">Length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Length</span><span class="p">)</span>
                     <span class="k">if</span> <span class="p">(</span> <span class="n">Length</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">):</span>
                         <span class="n">Length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Length</span><span class="p">)</span><span class="o">-</span><span class="mi">4</span>
-                <span class="k">if</span><span class="p">(</span><span class="n">attachment</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">Attachment_n</span><span class="p">]</span><span class="o">==</span><span class="kc">None</span> <span class="p">):</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">attachment</span><span class="p">[</span><span class="n">Attachment_n</span><span class="p">]</span><span class="o">==</span><span class="kc">None</span> <span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bad IMMA string&quot;</span><span class="p">,</span><span class="s2">&quot;Unsupported attachment ID </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">Attachment_n</span><span class="p">)</span>
-</div>
-        <span class="k">return</span> <span class="n">record</span>
+
+        <span class="k">return</span> <span class="n">record</span></div>
 
 <span class="c1"># Function to read in all the records in a file</span>
 <div class="viewcode-block" id="read"><a class="viewcode-back" href="../../module_IMMA.html#IMMA.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
@@ -177,8 +186,8 @@ Please <a href="https://github.com/philip-brohan/pyIMMA/issues/new">raise an iss
 <span class="sd">        :obj:`list`: List of records - each record is a :obj:`dict`:</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-</div>
-    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">get</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">get</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span></div>
 </pre></div>
 
           </div>
